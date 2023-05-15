@@ -41,7 +41,7 @@ export interface Options {
   logger?: {
     warn(message: string): void;
   };
-  precomputeHash?: boolean;
+  precomputedHash?: boolean;
   cnonceSize?: number;
   statusCode?: number;
   basic?: boolean;
@@ -63,7 +63,7 @@ export class DigestClient {
   private hashFunc: (message: Buffer | string | Uint8Array) => string;
   private nonceRaw = "abcdef0123456789";
   private logger: Options["logger"];
-  private precomputeHash: Options["precomputeHash"] = false;
+  private precomputedHash: Options["precomputedHash"];
   private digest: Record<string, any> = {};
   private hasAuth: boolean = false;
   private cnonceSize: number;
@@ -80,7 +80,7 @@ export class DigestClient {
     this.password = password;
 
     this.logger = options.logger;
-    this.precomputeHash = options.precomputeHash;
+    this.precomputedHash = options.precomputedHash ?? false;
 
     let algorithm = options.algorithm || "MD5";
     if (!supported_algorithms.includes(algorithm)) {
@@ -89,8 +89,7 @@ export class DigestClient {
           `Unsupported algorithm ${algorithm}, will try with MD5`
         );
       algorithm = "MD5";
-    }
-    if (algorithm.startsWith("SHA-256")) {
+    } else if (algorithm.startsWith("SHA-256")) {
       this.hashFunc = sha256;
     } else if (algorithm.startsWith("SHA-512-256")) {
       this.hashFunc = sha512256;
@@ -110,22 +109,27 @@ export class DigestClient {
   ) {
     const fetch = globalThis.fetch;
 
-    if (this.basic) return fetch(url, this.addBasicAuth(options));
-    const resp = await fetch(url, this.addAuth(url, options));
+    if (this.basic) {
+      return fetch(url, this.addBasicAuth(options));
+    }
 
-    if (resp.status == this.statusCode) {
+    const resp = await fetch(url, this.addAuth(url, options));
+    if (resp.status === this.statusCode) {
       this.hasAuth = false;
       this.parseAuth(resp.headers.get("www-authenticate"));
+
       if (this.hasAuth) {
         const respFinal = await fetch(url, this.addAuth(url, options));
-        if (respFinal.status == 401 || respFinal.status == this.statusCode) {
+        if (respFinal.status === 401 || respFinal.status == this.statusCode) {
           this.hasAuth = false;
         } else {
           this.digest.nc++;
         }
         return respFinal;
       }
-    } else this.digest.nc++;
+    } else {
+      this.digest.nc++;
+    }
     return resp;
   }
 
@@ -152,8 +156,12 @@ export class DigestClient {
   }
 
   addAuth(url: any, options: any) {
-    if (typeof options.factory == "function") options = options.factory();
-    if (!this.hasAuth) return options;
+    if (typeof options.factory == "function") {
+      options = options.factory();
+    }
+    if (!this.hasAuth) {
+      return options;
+    }
 
     const isRequest = typeof url === "object" && typeof url.url === "string";
     const urlStr = isRequest ? url.url : url;
@@ -161,7 +169,7 @@ export class DigestClient {
     const uri = _url.indexOf("/") == -1 ? "/" : _url.slice(_url.indexOf("/"));
     const method = options.method ? options.method.toUpperCase() : "GET";
 
-    let ha1 = this.precomputeHash
+    let ha1 = this.precomputedHash
       ? this.password
       : this.computeHash(this.user, this.digest.realm, this.password);
     if (this.digest.algorithm.endsWith("-sess")) {
@@ -212,17 +220,11 @@ algorithm=${this.digest.algorithm},response="${response}",nc=${ncString},cnonce=
     }
 
     this.hasAuth = true;
-
     this.digest.scheme = h.split(/\s/)[0];
-
     this.digest.realm = (parse(h, "realm", false) || "").replace(/["]/g, "");
-
     this.digest.qop = this.parseQop(h);
-
     this.digest.opaque = parse(h, "opaque");
-
     this.digest.nonce = parse(h, "nonce") || "";
-
     this.digest.cnonce = this.makeNonce();
     this.digest.nc++;
   }

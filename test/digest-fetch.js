@@ -1,23 +1,21 @@
 process.env.NO_DEPRECATION = 'digest-fetch';
 
-import after from 'after';
 import assert from 'assert';
-import DigestFetch from '../digest-fetch-src.js';
-import factory from './test-server.js';
 import chai from 'chai';
-var expect = chai.expect
-import chaiHttp from 'chai-http';
+import DigestFetch from "../dist/main.js";
 
-describe('digest-fetch', function(){
-  it('get function', function(){
+const expect = chai.expect
+
+describe('digest-fetch', function () {
+  it('get function', function () {
     assert.equal(typeof DigestFetch, 'function')
   })
 
-  it('should success', function() {
+  it('should success', function () {
     var client = new DigestFetch('test', '123')
     assert.equal(typeof client.fetch, 'function')
     client.parseAuth('')
-    client.addAuth('', {headers: {}})
+    client.addAuth('', { headers: {} })
     assert.equal(client.digest.nc, 0)
   })
 
