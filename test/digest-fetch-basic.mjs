@@ -1,8 +1,8 @@
-process.env.NO_DEPRECATION = 'digest-fetch';
+process.env.NO_DEPRECATION = "digest-fetch";
 import chai from "chai";
 import chaiHttp from "chai-http";
-import factory from "./test-server.js";
-import DigestFetch from "../dist/main.js";
+import factory from "./test-server.mjs";
+import DigestFetch from "../dist/index.mjs";
 
 const expect = chai.expect;
 chai.use(chaiHttp);

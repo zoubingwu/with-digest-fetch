@@ -12,6 +12,6 @@
     "noUnusedParameters": true,
     "noUnusedLocals": true
   },
-  "include": ["main.ts"],
+  "include": ["index.ts"],
   "exclude": ["node_modules", "example", "dist"]
 }

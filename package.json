@@ -10,14 +10,13 @@
     "declare": "tsc digest-fetch-src.js --allowJs --emitDeclarationOnly --declaration",
     "build": "tsup"
   },
-  "type": "module",
-  "main": "dist/main.cjs",
-  "module": "./dist/main.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "exports": {
     ".": {
-      "types": "./dist/main.d.ts",
-      "require": "./dist/main.cjs",
-      "import": "./dist/main.js"
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     }
   },
   "keywords": [
@@ -62,7 +61,7 @@
   },
   "tsup": {
     "entry": [
-      "main.ts"
+      "index.ts"
     ],
     "format": [
       "esm",
