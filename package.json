@@ -28,6 +28,10 @@
     "basic",
     "authentication"
   ],
+  "files": [
+    "dist",
+    "index.ts"
+  ],
   "author": "zoubingwu@gmail.com",
   "license": "MIT",
   "repository": {
