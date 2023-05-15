@@ -1,14 +1,23 @@
 {
-  "name": "digest-fetch",
-  "version": "3.0.4",
+  "name": "with-digest-fetch",
+  "version": "0.1.0",
   "description": "digest auth request plugin for fetch/node-fetch also support http basic auth authentication",
-  "main": "digest-fetch-src.js",
   "scripts": {
     "lint": "eslint --plugin markdown --ext js,md .",
     "test": "mocha --check-leaks --bail --no-exit --reporter spec test/digest-*",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --check-leaks --no-exit --reporter dot test/",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --check-leaks --no-exit --reporter spec test/",
-    "declare": "tsc digest-fetch-src.js --allowJs --emitDeclarationOnly --declaration"
+    "declare": "tsc digest-fetch-src.js --allowJs --emitDeclarationOnly --declaration",
+    "build": "tsup"
+  },
+  "main": "dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
   },
   "keywords": [
     "digest",
@@ -19,17 +28,15 @@
     "basic",
     "authentication"
   ],
-  "author": "stefanliu@outlook.com",
-  "license": "ISC",
+  "author": "zoubingwu@gmail.com",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devfans/digest-fetch.git"
-  },
-  "exports": {
-    "default": "./digest-fetch-src.js",
-    "types": "./digest-fetch-src.d.ts"
+    "url": "git+https://github.com/zoubingwu/with-digest-fetch"
   },
   "devDependencies": {
+    "@types/base-64": "^1.0.0",
+    "@types/md5": "^2.3.2",
     "@types/node": "^18.15.11",
     "after": "^0.8.2",
     "chai": "^4.2.0",
@@ -41,14 +48,27 @@
     "node-fetch": "^3.3.1",
     "passport": "^0.6.0",
     "passport-digest": "^0.1.0",
-    "serialize-javascript": "^3.1.0"
+    "serialize-javascript": "^3.1.0",
+    "tsup": "^6.7.0"
   },
-  "homepage": "https://github.com/devfans/digest-fetch#readme",
+  "homepage": "https://github.com/zoubingwu/with-digest-fetch",
   "dependencies": {
     "base-64": "^0.1.0",
     "js-sha256": "^0.9.0",
     "js-sha512": "^0.8.0",
-    "md5": "^2.3.0"
+    "md5": "^2.3.0",
+    "typescript": "^5.0.4"
   },
-  "type": "module"
+  "tsup": {
+    "entry": [
+      "main.ts"
+    ],
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "sourcemap": true,
+    "clean": true,
+    "dts": true
+  }
 }
