@@ -1,6 +1,6 @@
 {
   "name": "with-digest-fetch",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "digest auth request plugin for fetch/node-fetch also support http basic auth authentication",
   "scripts": {
     "test": "mocha --check-leaks --bail --no-exit --reporter spec test/digest-*",
