@@ -3,14 +3,18 @@
 //  |  `digest-fetch` is a wrapper of `node-fetch` or `fetch` to provide http digest authentication boostraping.
 //  |
 /// !-----------------------------------------------------------------------------------------------------------
-
-import md5 from "md5";
+import crypto from 'node:crypto';
 import js256 from "js-sha256";
 import js512 from "js-sha512";
-import base64 from "base-64";
 
 const sha256 = js256.sha256;
 const sha512256 = js512.sha512_256;
+
+const md5 = (s: string) => crypto.createHash('md5').update(s).digest("hex")
+const base64 = {
+  encode: (s: string) => Buffer.from(s).toString('base64'),
+  decode: (s: string) => Buffer.from(s, 'base64').toString('ascii')
+}
 
 const supported_algorithms = [
   "MD5",
@@ -60,7 +64,7 @@ function setHeader(headers: HeadersInit, key: string, value: string) {
 }
 
 export class DigestClient {
-  private hashFunc: (message: Buffer | string | Uint8Array) => string;
+  private hashFunc: (message: any) => string;
   private nonceRaw = "abcdef0123456789";
   private logger: Options["logger"];
   private precomputedHash: Options["precomputedHash"];
